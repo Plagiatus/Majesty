@@ -6,6 +6,11 @@ export enum GAME_EVENT_TYPE {
 
     REMOVE_CARD_FROM_DISPLAY = "removeCardFromDisplay",
     
+    NEXT_ROUND = "nextRound",
+    NEXT_PLAYER = "nextPlayer",
+    GAME_ENDING = "gameEnding",
+    GAME_OVER = "gameOver",
+    
     ERROR_NOT_ENOUGH_MEEPLES = "errorNotEnoughMeeples",
 }
 

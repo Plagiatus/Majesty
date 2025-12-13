@@ -9,4 +9,17 @@
 	<title>Majesty</title>
 </svelte:head>
 
-{@render children()}
+<main>
+	{@render children()}
+</main>
+
+<style>
+	main {
+		min-width: 100vw;
+		min-height: 100vh;
+		border: 30px solid transparent;
+		padding: 15px;
+		border-image: url(page.jpg) 30 fill repeat;
+		/* z-index: 0; */
+	}
+</style>

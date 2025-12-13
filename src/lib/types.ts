@@ -3,10 +3,10 @@ export enum CARD_TYPE {
     BREWER,
     WITCH,
     GUARD,
-    SOLDIER,
-    INNKEEP,
-    ROYAL,
-    HOSPITAL,
+    KNIGHT,
+    INNKEEPER,
+    NOBLE,
+    INFIRMARY,
 }
 
 export interface Card {

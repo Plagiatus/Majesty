@@ -1,10 +1,11 @@
 import { EventTargetAsync, GAME_EVENT_TYPE } from "./events";
+import { LOCATION_SIDE, locations } from "./location";
 import { Player } from "./player.svelte";
 import { CARD_TYPE, type Card } from "./types";
 import { shuffleArray } from "./utils";
 
-export const MAX_MEEPLES = 5
-const MAX_ROUNDS = 12
+export const MAX_MEEPLES = 5;
+const MAX_ROUNDS = 12;
 
 export class Game extends EventTargetAsync {
     players: Player[] = $state([]);
@@ -19,12 +20,20 @@ export class Game extends EventTargetAsync {
         return this.players[this.current_player_index]
     }
 
-    constructor(player_amt: number) {
+    constructor(players: string[], side: LOCATION_SIDE)
+    constructor(players: string[], sides: LOCATION_SIDE[])
+    constructor(players: string[], sideOrSides: LOCATION_SIDE | LOCATION_SIDE[]) {
         super();
-        for (let i: number = 0; i < player_amt; i++) {
-            this.players.push(new Player())
+        for (let player of players) {
+            this.players.push(new Player(player))
         }
-        this.initDeck(player_amt);
+        if (typeof sideOrSides == "number") {
+            sideOrSides = Array(CARD_TYPE.INFIRMARY).fill(sideOrSides)
+        }
+        for (let i: number = 0; i < CARD_TYPE.INFIRMARY; i++) {
+            locations[i].side = sideOrSides[i]
+        }
+        this.initDeck(this.players.length);
         this.next_player()
     }
 
@@ -38,8 +47,7 @@ export class Game extends EventTargetAsync {
             { option1: CARD_TYPE.MILLER },
             { option1: CARD_TYPE.MILLER },
             { option1: CARD_TYPE.MILLER },
-            { option1: CARD_TYPE.BREWER },
-            { option1: CARD_TYPE.BREWER },
+            { option1: CARD_TYPE.MILLER },
             { option1: CARD_TYPE.BREWER },
             { option1: CARD_TYPE.BREWER },
             { option1: CARD_TYPE.BREWER },
@@ -47,53 +55,56 @@ export class Game extends EventTargetAsync {
             { option1: CARD_TYPE.WITCH },
             { option1: CARD_TYPE.WITCH },
             { option1: CARD_TYPE.WITCH },
-            { option1: CARD_TYPE.WITCH },
-            { option1: CARD_TYPE.WITCH },
             { option1: CARD_TYPE.GUARD },
             { option1: CARD_TYPE.GUARD },
             { option1: CARD_TYPE.GUARD },
-            { option1: CARD_TYPE.GUARD },
-            { option1: CARD_TYPE.GUARD },
-            { option1: CARD_TYPE.SOLDIER },
-            { option1: CARD_TYPE.SOLDIER },
-            { option1: CARD_TYPE.SOLDIER },
-            { option1: CARD_TYPE.SOLDIER },
-            { option1: CARD_TYPE.SOLDIER },
-            { option1: CARD_TYPE.INNKEEP },
-            { option1: CARD_TYPE.INNKEEP },
-            { option1: CARD_TYPE.INNKEEP },
-            { option1: CARD_TYPE.INNKEEP },
-            { option1: CARD_TYPE.ROYAL },
-            { option1: CARD_TYPE.ROYAL },
+            { option1: CARD_TYPE.KNIGHT },
+            { option1: CARD_TYPE.KNIGHT },
+            { option1: CARD_TYPE.INNKEEPER },
+            { option1: CARD_TYPE.INNKEEPER },
+            { option1: CARD_TYPE.NOBLE },
+            { option1: CARD_TYPE.NOBLE },
+            { option1: CARD_TYPE.NOBLE },
+
+            { option1: CARD_TYPE.WITCH, option2: CARD_TYPE.BREWER },
+            { option1: CARD_TYPE.WITCH, option2: CARD_TYPE.GUARD },
+            { option1: CARD_TYPE.BREWER, option2: CARD_TYPE.MILLER },
+            { option1: CARD_TYPE.BREWER, option2: CARD_TYPE.MILLER },
+            { option1: CARD_TYPE.NOBLE, option2: CARD_TYPE.GUARD },
+            { option1: CARD_TYPE.KNIGHT, option2: CARD_TYPE.INNKEEPER },
+            { option1: CARD_TYPE.KNIGHT, option2: CARD_TYPE.MILLER },
+            { option1: CARD_TYPE.GUARD, option2: CARD_TYPE.INNKEEPER },
+            { option1: CARD_TYPE.NOBLE, option2: CARD_TYPE.INNKEEPER },
         ] // 33
         let batch2: Card[] = [
             { option1: CARD_TYPE.MILLER },
             { option1: CARD_TYPE.MILLER },
-            { option1: CARD_TYPE.MILLER },
-            { option1: CARD_TYPE.MILLER },
-            { option1: CARD_TYPE.BREWER },
-            { option1: CARD_TYPE.BREWER },
-            { option1: CARD_TYPE.BREWER },
             { option1: CARD_TYPE.BREWER },
             { option1: CARD_TYPE.BREWER },
             { option1: CARD_TYPE.WITCH },
             { option1: CARD_TYPE.WITCH },
-            { option1: CARD_TYPE.WITCH },
-            { option1: CARD_TYPE.WITCH },
             { option1: CARD_TYPE.GUARD },
             { option1: CARD_TYPE.GUARD },
-            { option1: CARD_TYPE.GUARD },
-            { option1: CARD_TYPE.GUARD },
-            { option1: CARD_TYPE.SOLDIER },
-            { option1: CARD_TYPE.SOLDIER },
-            { option1: CARD_TYPE.SOLDIER },
-            { option1: CARD_TYPE.SOLDIER },
-            { option1: CARD_TYPE.INNKEEP },
-            { option1: CARD_TYPE.INNKEEP },
-            { option1: CARD_TYPE.INNKEEP },
-            { option1: CARD_TYPE.ROYAL },
-            { option1: CARD_TYPE.ROYAL },
-            { option1: CARD_TYPE.ROYAL },
+            { option1: CARD_TYPE.KNIGHT },
+            { option1: CARD_TYPE.INNKEEPER },
+            { option1: CARD_TYPE.INNKEEPER },
+            { option1: CARD_TYPE.NOBLE },
+            { option1: CARD_TYPE.NOBLE },
+
+            { option1: CARD_TYPE.GUARD, option2: CARD_TYPE.KNIGHT },
+            { option1: CARD_TYPE.GUARD, option2: CARD_TYPE.KNIGHT },
+            { option1: CARD_TYPE.GUARD, option2: CARD_TYPE.WITCH },
+            { option1: CARD_TYPE.GUARD, option2: CARD_TYPE.WITCH },
+            { option1: CARD_TYPE.NOBLE, option2: CARD_TYPE.INNKEEPER },
+            { option1: CARD_TYPE.BREWER, option2: CARD_TYPE.WITCH },
+            { option1: CARD_TYPE.BREWER, option2: CARD_TYPE.WITCH },
+            { option1: CARD_TYPE.BREWER, option2: CARD_TYPE.MILLER },
+            { option1: CARD_TYPE.KNIGHT, option2: CARD_TYPE.INNKEEPER },
+            { option1: CARD_TYPE.KNIGHT, option2: CARD_TYPE.INNKEEPER },
+            { option1: CARD_TYPE.NOBLE, option2: CARD_TYPE.WITCH },
+            { option1: CARD_TYPE.KNIGHT, option2: CARD_TYPE.MILLER },
+            { option1: CARD_TYPE.KNIGHT, option2: CARD_TYPE.BREWER },
+            { option1: CARD_TYPE.INNKEEPER, option2: CARD_TYPE.WITCH },
         ] // 27
 
         this.deck.push(...shuffleArray(batch1), ...shuffleArray(batch2))
@@ -106,97 +117,35 @@ export class Game extends EventTargetAsync {
         }
     }
 
-    private next_player() {
-        console.log("next player");
+    private async next_player() {
         this.current_player_index = (this.current_player_index + 1) % this.players.length;
         if (this.current_player_index == 0) {
             this.round++;
         }
 
         if (this.round > MAX_ROUNDS) {
+            await this.dispatchEventAsync({ type: GAME_EVENT_TYPE.GAME_ENDING })
             this.endGame();
+        } else {
+            await this.dispatchEventAsync({ type: GAME_EVENT_TYPE.NEXT_PLAYER, target: this.current_player })
         }
     }
 
     private async addCardAndBonus(card: Card, player: Player) {
         player.cards[card.option1].push(card);
-
-        // TODO: Differentiate between side A and B
-
-        switch (card.option1) {
-            case CARD_TYPE.MILLER:
-                await player.addCoins(2 * player.cards[CARD_TYPE.MILLER].length);
-                break;
-
-            case CARD_TYPE.BREWER:
-                await player.addCoins(2 * player.cards[CARD_TYPE.BREWER].length);
-                await player.addMeeples(1 * player.cards[CARD_TYPE.BREWER].length);
-
-                for (let player of this.players) {
-                    await player.addCoins(Math.sign(player.cards[CARD_TYPE.MILLER].length))
-                }
-                break;
-
-            case CARD_TYPE.WITCH:
-                let card = player.cards[CARD_TYPE.HOSPITAL].pop()
-                if (card) {
-                    // TODO: allow for choosing card again
-                    player.cards[card.option1].push(card);
-                }
-                await player.addCoins(2 * player.cards[CARD_TYPE.MILLER].length +
-                    2 * player.cards[CARD_TYPE.BREWER].length +
-                    2 * player.cards[CARD_TYPE.WITCH].length);
-                break;
-
-            case CARD_TYPE.GUARD:
-                await player.addCoins(2 * player.cards[CARD_TYPE.GUARD].length +
-                    2 * player.cards[CARD_TYPE.SOLDIER].length +
-                    2 * player.cards[CARD_TYPE.INNKEEP].length);
-                break;
-
-            case CARD_TYPE.SOLDIER:
-                let soldier_amt = player.cards[CARD_TYPE.SOLDIER].length;
-                for (let opponent of this.players) {
-                    if (player == opponent) continue;
-                    if (soldier_amt > opponent.cards[CARD_TYPE.GUARD].length) {
-                        for (let i: number = 0; i < CARD_TYPE.HOSPITAL; i++) {
-                            if (opponent.cards[i].length > 0) {
-                                opponent.cards[CARD_TYPE.HOSPITAL].push(opponent.cards[i].pop()!)
-                                break;
-                            }
-                        }
-                    }
-                }
-
-                await player.addCoins(3 * soldier_amt);
-                break;
-
-            case CARD_TYPE.INNKEEP:
-                await player.addCoins(4 * player.cards[CARD_TYPE.INNKEEP].length);
-
-                for (let player of this.players) {
-                    await player.addCoins(Math.sign(player.cards[CARD_TYPE.BREWER].length))
-                }
-                break;
-
-            case CARD_TYPE.ROYAL:
-                await player.addCoins(5 * player.cards[CARD_TYPE.ROYAL].length);
-                await player.addMeeples(1 * player.cards[CARD_TYPE.ROYAL].length);
-        }
+        await locations[card.option1].cardAdded(player, this.players);
     }
 
     private async endGame() {
         // game is over and it's time to calculate all the bonuses
 
         // Hospital
-        for (let player of this.players) {
-            await player.addCoins(-1 * player.cards[CARD_TYPE.HOSPITAL].length)
-        }
+        locations[CARD_TYPE.INFIRMARY].gameEnd?.(this.players)
 
         // Different people multiplier
         for (let player of this.players) {
             let amountOfDifferentCards = 0;
-            for (let i: number = 0; i < CARD_TYPE.HOSPITAL; i++) {
+            for (let i: number = 0; i < CARD_TYPE.INFIRMARY; i++) {
                 if (player.cards[i].length > 0) {
                     amountOfDifferentCards++;
                 }
@@ -205,7 +154,7 @@ export class Game extends EventTargetAsync {
         }
 
         // Most people of one type multiplier
-        for (let i: number = 0; i < CARD_TYPE.HOSPITAL; i++) {
+        for (let i: number = 0; i < CARD_TYPE.INFIRMARY; i++) {
             let playersWithMost: Player[] = [];
             let most: number = 1;
             for (let player of this.players) {
@@ -218,9 +167,10 @@ export class Game extends EventTargetAsync {
                 }
             }
             for (let player of playersWithMost) {
-                await player.addCoins(10 + i);
+                await player.addCoins(locations[i].gameEndMostCardsBonus());
             }
         }
+        await this.dispatchEventAsync({ type: GAME_EVENT_TYPE.GAME_OVER })
     }
 
 
@@ -248,7 +198,7 @@ export class Game extends EventTargetAsync {
 
         // add meeples to players bank
         await this.current_player.addMeeples(meeples);
-        
+
         // add card to players deck & calc bonus
         await this.addCardAndBonus(card, this.current_player);
 

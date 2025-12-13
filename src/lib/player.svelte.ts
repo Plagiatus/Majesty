@@ -5,8 +5,13 @@ import type { Card } from "./types";
 export class Player extends EventTargetAsync {
     #meeples: number = $state(MAX_MEEPLES);
     #coins: number = $state(0);
-    #cards: Card[][] = $state([[],[],[],[],[],[],[],[]]);
+    #cards: Card[][] = $state([[], [], [], [], [], [], [], []]);
+    name: string
 
+    constructor(name: string) {
+        super();
+        this.name = name
+    }
     get meeples(): number {
         return this.#meeples;
     }
@@ -17,7 +22,7 @@ export class Player extends EventTargetAsync {
     }
     async addMeeples(amt: number) {
         this.#meeples += amt;
-        if(amt !== 0) await this.dispatchEventAsync({ type: GAME_EVENT_TYPE.PLAYER_CHANGED_MEEPLES, target: this, detail: amt })
+        if (amt !== 0) await this.dispatchEventAsync({ type: GAME_EVENT_TYPE.PLAYER_CHANGED_MEEPLES, target: this, detail: amt })
     }
 
     get coins(): number {
@@ -30,7 +35,7 @@ export class Player extends EventTargetAsync {
     }
     async addCoins(amt: number) {
         this.#coins += amt;
-        if(amt !== 0) await this.dispatchEventAsync({ type: GAME_EVENT_TYPE.PLAYER_CHANGED_MONEY, target: this, detail: amt });
+        if (amt !== 0) await this.dispatchEventAsync({ type: GAME_EVENT_TYPE.PLAYER_CHANGED_MONEY, target: this, detail: amt });
     }
 
     get cards(): Card[][] {
